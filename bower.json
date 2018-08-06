@@ -7,7 +7,7 @@
     "./dist/textAngularSetup.js",
     "./dist/textAngular.css"
   ],
-  "description": "A radically powerful Text-Editor/Wysiwyg editor for Angular.js",
+  "description": "A radically powerful Text-Editor/Wysiwyg editor for Angular.js. Versión modificada para soportar multiples tags 'taOptionsSelect'",
   "keywords": [
     "editor",
     "angular",
