@@ -144,12 +144,12 @@ angular.module('textAngularSetup', [])
 // This is the element selector string that is used to catch click events within a taBind, prevents the default and $emits a 'ta-element-select' event
 // these are individually used in an angular.element().find() call. What can go here depends on whether you have full jQuery loaded or just jQLite with angularjs.
 // div is only used as div.ta-insert-video caught in filter.
-.value('taSelectableElements', ['a','img'])
+.value('taSelectableElements', ['a','img','span','td','th'])
 
 // This is an array of objects with the following options:
-//				selector: <string> a jqLite or jQuery selector string
-//				customAttribute: <string> an attribute to search for
-//				renderLogic: <function(element)>
+//              selector: <string> a jqLite or jQuery selector string
+//              customAttribute: <string> an attribute to search for
+//              renderLogic: <function(element)>
 // Both or one of selector and customAttribute must be defined.
 .value('taCustomRenderers', [
     {

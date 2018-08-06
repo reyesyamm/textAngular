@@ -32,21 +32,21 @@ var textAngularVersion = 'v1.5.16';   // This is automatically updated during th
 // ----------------------------------------------------------
 /* istanbul ignore next: untestable browser check */
 var _browserDetect = {
-	ie: (function(){
-		var undef,
-			v = 3,
-			div = document.createElement('div'),
-			all = div.getElementsByTagName('i');
+    ie: (function(){
+        var undef,
+            v = 3,
+            div = document.createElement('div'),
+            all = div.getElementsByTagName('i');
 
-		while (
-			div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
-			all[0]
-		);
+        while (
+            div.innerHTML = '<!--[if gt IE ' + (++v) + ']><i></i><![endif]-->',
+            all[0]
+        );
 
-		return v > 4 ? v : undef;
-	}()),
-	webkit: /AppleWebKit\/([\d.]+)/i.test(navigator.userAgent),
-	isFirefox: navigator.userAgent.toLowerCase().indexOf('firefox') > -1
+        return v > 4 ? v : undef;
+    }()),
+    webkit: /AppleWebKit\/([\d.]+)/i.test(navigator.userAgent),
+    isFirefox: navigator.userAgent.toLowerCase().indexOf('firefox') > -1
 };
 
 // Global to textAngular to measure performance where needed
@@ -54,12 +54,12 @@ var _browserDetect = {
 var performance = performance || {};
 /* istanbul ignore next: untestable browser check */
 performance.now = (function() {
-	return performance.now       ||
-		performance.mozNow    ||
-		performance.msNow     ||
-		performance.oNow      ||
-		performance.webkitNow ||
-		function() { return new Date().getTime(); };
+    return performance.now       ||
+        performance.mozNow    ||
+        performance.msNow     ||
+        performance.oNow      ||
+        performance.webkitNow ||
+        function() { return new Date().getTime(); };
 })();
 // usage is:
 // var t0 = performance.now();
@@ -71,19 +71,19 @@ performance.now = (function() {
 // turn html into pure text that shows visiblity
 function stripHtmlToText(html)
 {
-	var tmp = document.createElement("DIV");
-	tmp.innerHTML = html;
-	var res = tmp.textContent || tmp.innerText || '';
-	res.replace('\u200B', ''); // zero width space
-	res = res.trim();
-	return res;
+    var tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    var res = tmp.textContent || tmp.innerText || '';
+    res.replace('\u200B', ''); // zero width space
+    res = res.trim();
+    return res;
 }
 // get html
 function getDomFromHtml(html)
 {
-	var tmp = document.createElement("DIV");
-	tmp.innerHTML = html;
-	return tmp;
+    var tmp = document.createElement("DIV");
+    tmp.innerHTML = html;
+    return tmp;
 }
 
 
@@ -98,98 +98,98 @@ var VALIDELEMENTS = /^(#text|span|address|article|aside|audio|blockquote|canvas|
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String/Trim#Compatibility
 /* istanbul ignore next: trim shim for older browsers */
 if (!String.prototype.trim) {
-	String.prototype.trim = function () {
-		return this.replace(/^\s+|\s+$/g, '');
-	};
+    String.prototype.trim = function () {
+        return this.replace(/^\s+|\s+$/g, '');
+    };
 }
 
 /*
-	Custom stylesheet for the placeholders rules.
-	Credit to: http://davidwalsh.name/add-rules-stylesheets
+    Custom stylesheet for the placeholders rules.
+    Credit to: http://davidwalsh.name/add-rules-stylesheets
 */
 var sheet, addCSSRule, removeCSSRule, _addCSSRule, _removeCSSRule, _getRuleIndex;
 /* istanbul ignore else: IE <8 test*/
 if(_browserDetect.ie > 8 || _browserDetect.ie === undefined){
-	var _sheets = document.styleSheets;
-	/* istanbul ignore next: preference for stylesheet loaded externally */
-	for(var i = 0; i < _sheets.length; i++){
-		if(_sheets[i].media.length === 0 || _sheets[i].media.mediaText.match(/(all|screen)/ig)){
-			if(_sheets[i].href){
-				if(_sheets[i].href.match(/textangular\.(min\.|)css/ig)){
-					sheet = _sheets[i];
-					break;
-				}
-			}
-		}
-	}
-	/* istanbul ignore next: preference for stylesheet loaded externally */
-	if(!sheet){
-		// this sheet is used for the placeholders later on.
-		sheet = (function() {
-			// Create the <style> tag
-			var style = document.createElement("style");
-			/* istanbul ignore else : WebKit hack :( */
-			if(_browserDetect.webkit) style.appendChild(document.createTextNode(""));
+    var _sheets = document.styleSheets;
+    /* istanbul ignore next: preference for stylesheet loaded externally */
+    for(var i = 0; i < _sheets.length; i++){
+        if(_sheets[i].media.length === 0 || _sheets[i].media.mediaText.match(/(all|screen)/ig)){
+            if(_sheets[i].href){
+                if(_sheets[i].href.match(/textangular\.(min\.|)css/ig)){
+                    sheet = _sheets[i];
+                    break;
+                }
+            }
+        }
+    }
+    /* istanbul ignore next: preference for stylesheet loaded externally */
+    if(!sheet){
+        // this sheet is used for the placeholders later on.
+        sheet = (function() {
+            // Create the <style> tag
+            var style = document.createElement("style");
+            /* istanbul ignore else : WebKit hack :( */
+            if(_browserDetect.webkit) style.appendChild(document.createTextNode(""));
 
-			// Add the <style> element to the page, add as first so the styles can be overridden by custom stylesheets
-			document.getElementsByTagName('head')[0].appendChild(style);
+            // Add the <style> element to the page, add as first so the styles can be overridden by custom stylesheets
+            document.getElementsByTagName('head')[0].appendChild(style);
 
-			return style.sheet;
-		})();
-	}
+            return style.sheet;
+        })();
+    }
 
-	// use as: addCSSRule("header", "float: left");
-	addCSSRule = function(selector, rules) {
-		return _addCSSRule(sheet, selector, rules);
-	};
-	_addCSSRule = function(_sheet, selector, rules){
-		var insertIndex;
-		var insertedRule;
-		// This order is important as IE 11 has both cssRules and rules but they have different lengths - cssRules is correct, rules gives an error in IE 11
-		/* istanbul ignore next: browser catches */
-		if(_sheet.cssRules) insertIndex = Math.max(_sheet.cssRules.length - 1, 0);
-		else if(_sheet.rules) insertIndex = Math.max(_sheet.rules.length - 1, 0);
+    // use as: addCSSRule("header", "float: left");
+    addCSSRule = function(selector, rules) {
+        return _addCSSRule(sheet, selector, rules);
+    };
+    _addCSSRule = function(_sheet, selector, rules){
+        var insertIndex;
+        var insertedRule;
+        // This order is important as IE 11 has both cssRules and rules but they have different lengths - cssRules is correct, rules gives an error in IE 11
+        /* istanbul ignore next: browser catches */
+        if(_sheet.cssRules) insertIndex = Math.max(_sheet.cssRules.length - 1, 0);
+        else if(_sheet.rules) insertIndex = Math.max(_sheet.rules.length - 1, 0);
 
-		/* istanbul ignore else: untestable IE option */
-		if(_sheet.insertRule) {
-			_sheet.insertRule(selector + "{" + rules + "}", insertIndex);
-		}
-		else {
-			_sheet.addRule(selector, rules, insertIndex);
-		}
-		/* istanbul ignore next: browser catches */
-		if(sheet.rules) insertedRule = sheet.rules[insertIndex];
-		else if(sheet.cssRules) insertedRule = sheet.cssRules[insertIndex];
-		// return the inserted stylesheet rule
-		return insertedRule;
-	};
+        /* istanbul ignore else: untestable IE option */
+        if(_sheet.insertRule) {
+            _sheet.insertRule(selector + "{" + rules + "}", insertIndex);
+        }
+        else {
+            _sheet.addRule(selector, rules, insertIndex);
+        }
+        /* istanbul ignore next: browser catches */
+        if(sheet.rules) insertedRule = sheet.rules[insertIndex];
+        else if(sheet.cssRules) insertedRule = sheet.cssRules[insertIndex];
+        // return the inserted stylesheet rule
+        return insertedRule;
+    };
 
-	_getRuleIndex = function(rule, rules) {
-		var i, ruleIndex;
-		for (i=0; i < rules.length; i++) {
-			/* istanbul ignore else: check for correct rule */
-			if (rules[i].cssText === rule.cssText) {
-				ruleIndex = i;
-				break;
-			}
-		}
-		return ruleIndex;
-	};
+    _getRuleIndex = function(rule, rules) {
+        var i, ruleIndex;
+        for (i=0; i < rules.length; i++) {
+            /* istanbul ignore else: check for correct rule */
+            if (rules[i].cssText === rule.cssText) {
+                ruleIndex = i;
+                break;
+            }
+        }
+        return ruleIndex;
+    };
 
-	removeCSSRule = function(rule){
-		_removeCSSRule(sheet, rule);
-	};
-	/* istanbul ignore next: tests are browser specific */
-	_removeCSSRule = function(sheet, rule){
-		var rules = sheet.cssRules || sheet.rules;
-		if(!rules || rules.length === 0) return;
-		var ruleIndex = _getRuleIndex(rule, rules);
-		if(sheet.removeRule){
-			sheet.removeRule(ruleIndex);
-		}else{
-			sheet.deleteRule(ruleIndex);
-		}
-	};
+    removeCSSRule = function(rule){
+        _removeCSSRule(sheet, rule);
+    };
+    /* istanbul ignore next: tests are browser specific */
+    _removeCSSRule = function(sheet, rule){
+        var rules = sheet.cssRules || sheet.rules;
+        if(!rules || rules.length === 0) return;
+        var ruleIndex = _getRuleIndex(rule, rules);
+        if(sheet.removeRule){
+            sheet.removeRule(ruleIndex);
+        }else{
+            sheet.deleteRule(ruleIndex);
+        }
+    };
 }
 
 angular.module('textAngular.factories', [])
@@ -1784,35 +1784,35 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
             // map events to special keys...
             // mappings is an array of maps from events to specialKeys as declared in textAngularSetup
             var _keyMappings = [
-                //		ctrl/command + z
+                //      ctrl/command + z
                 {
                     specialKey: 'UndoKey',
                     forbiddenModifiers: _ALT_KEY + _SHIFT_KEY,
                     mustHaveModifiers: [_META_KEY + _CTRL_KEY],
                     keyCode: 90
                 },
-                //		ctrl/command + shift + z
+                //      ctrl/command + shift + z
                 {
                     specialKey: 'RedoKey',
                     forbiddenModifiers: _ALT_KEY,
                     mustHaveModifiers: [_META_KEY + _CTRL_KEY, _SHIFT_KEY],
                     keyCode: 90
                 },
-                //		ctrl/command + y
+                //      ctrl/command + y
                 {
                     specialKey: 'RedoKey',
                     forbiddenModifiers: _ALT_KEY + _SHIFT_KEY,
                     mustHaveModifiers: [_META_KEY + _CTRL_KEY],
                     keyCode: 89
                 },
-                //		TabKey
+                //      TabKey
                 {
                     specialKey: 'TabKey',
                     forbiddenModifiers: _META_KEY + _SHIFT_KEY + _ALT_KEY + _CTRL_KEY,
                     mustHaveModifiers: [],
                     keyCode: _TAB_KEYCODE
                 },
-                //		shift + TabKey
+                //      shift + TabKey
                 {
                     specialKey: 'ShiftTabKey',
                     forbiddenModifiers: _META_KEY + _ALT_KEY + _CTRL_KEY,
@@ -2549,7 +2549,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                     element.on('keyup', scope.events.keyup = function(event, eventData){
                         /* istanbul ignore else: this is for catching the jqLite testing*/
                         if(eventData) angular.extend(event, eventData);
-                        taSelection.setStateShiftKey(false);	// clear the ShiftKey state
+                        taSelection.setStateShiftKey(false);    // clear the ShiftKey state
                         /* istanbul ignore next: FF specific bug fix */
                         if (event.keyCode === _TAB_KEYCODE) {
                             var _selection = taSelection.getSelection();
@@ -2568,7 +2568,7 @@ angular.module('textAngular.taBind', ['textAngular.factories', 'textAngular.DOM'
                         if(!_isReadonly && !BLOCKED_KEYS.test(event.keyCode)){
                             /* istanbul ignore next: Ignore any _ENTER_KEYCODE that has ctrlKey, metaKey or alKey */
                             if (event.keyCode === _ENTER_KEYCODE && (event.ctrlKey || event.metaKey || event.altKey)) {
-                                // we ignore any ENTER_	KEYCODE that is anything but plain or a shift one...
+                                // we ignore any ENTER_ KEYCODE that is anything but plain or a shift one...
                             } else {
                                 // if enter - insert new taDefaultWrap, if shift+enter insert <br/>
                                 if(_defaultVal !== '' && _defaultVal !== '<BR><BR>' && event.keyCode === _ENTER_KEYCODE && !event.ctrlKey && !event.metaKey && !event.altKey){
@@ -2870,7 +2870,7 @@ var textAngular = angular.module("textAngular", ['ngSanitize', 'textAngularSetup
 
 textAngular.config([function(){
     // clear taTools variable. Just catches testing and any other time that this config may run multiple times...
-    angular.forEach(taTools, function(value, key){ delete taTools[key];	});
+    angular.forEach(taTools, function(value, key){ delete taTools[key]; });
 }]);
 
 textAngular.directive("textAngular", [
@@ -2880,7 +2880,9 @@ textAngular.directive("textAngular", [
         textAngularManager, $document, $animate, $log, $q, $parse){
         return {
             require: '?ngModel',
-            scope: {},
+            scope: {
+                lastSel: '='
+            },
             restrict: "EA",
             priority: 2, // So we override validators correctly
             link: function(scope, element, attrs, ngModel){
@@ -2925,23 +2927,23 @@ textAngular.directive("textAngular", [
                     showHtml: scope.$eval(attrs.taShowHtml) || false
                 });
                 // setup the options from the optional attributes
-                if(attrs.taFocussedClass)			scope.classes.focussed = attrs.taFocussedClass;
-                if(attrs.taTextEditorClass)			scope.classes.textEditor = attrs.taTextEditorClass;
-                if(attrs.taHtmlEditorClass)			scope.classes.htmlEditor = attrs.taHtmlEditorClass;
+                if(attrs.taFocussedClass)           scope.classes.focussed = attrs.taFocussedClass;
+                if(attrs.taTextEditorClass)         scope.classes.textEditor = attrs.taTextEditorClass;
+                if(attrs.taHtmlEditorClass)         scope.classes.htmlEditor = attrs.taHtmlEditorClass;
                 if(attrs.taDefaultTagAttributes){
-                    try	{
-                        //	TODO: This should use angular.merge to enhance functionality once angular 1.4 is required
+                    try {
+                        //  TODO: This should use angular.merge to enhance functionality once angular 1.4 is required
                         angular.extend(scope.defaultTagAttributes, angular.fromJson(attrs.taDefaultTagAttributes));
                     } catch (error) {
                         $log.error(error);
                     }
                 }
                 // optional setup functions
-                if(attrs.taTextEditorSetup)			scope.setup.textEditorSetup = scope.$parent.$eval(attrs.taTextEditorSetup);
-                if(attrs.taHtmlEditorSetup)			scope.setup.htmlEditorSetup = scope.$parent.$eval(attrs.taHtmlEditorSetup);
+                if(attrs.taTextEditorSetup)         scope.setup.textEditorSetup = scope.$parent.$eval(attrs.taTextEditorSetup);
+                if(attrs.taHtmlEditorSetup)         scope.setup.htmlEditorSetup = scope.$parent.$eval(attrs.taHtmlEditorSetup);
                 // optional fileDropHandler function
-                if(attrs.taFileDrop)				scope.fileDropHandler = scope.$parent.$eval(attrs.taFileDrop);
-                else								scope.fileDropHandler = scope.defaultFileDropHandler;
+                if(attrs.taFileDrop)                scope.fileDropHandler = scope.$parent.$eval(attrs.taFileDrop);
+                else                                scope.fileDropHandler = scope.defaultFileDropHandler;
 
                 _originalContents = element[0].innerHTML;
                 // clear the original content
@@ -3402,6 +3404,9 @@ textAngular.directive("textAngular", [
                         _editorFunctions.unfocus();
                         // to prevent multiple apply error defer to next seems to work.
                         $timeout(function(){
+                            // if(scope.onLostFocus != null){
+                            //     scope.onLostFocus();
+                            // }
                             scope._bUpdateSelectedStyles = false;
                             element.triggerHandler('blur');
                             scope.focussed = false;
@@ -3514,12 +3519,12 @@ textAngular.directive("textAngular", [
                 else{
                     var _toolbar = angular.element('<div text-angular-toolbar name="textAngularToolbar' + _serial + '">');
                     // passthrough init of toolbar options
-                    if(attrs.taToolbar)						_toolbar.attr('ta-toolbar', attrs.taToolbar);
-                    if(attrs.taToolbarClass)				_toolbar.attr('ta-toolbar-class', attrs.taToolbarClass);
-                    if(attrs.taToolbarGroupClass)			_toolbar.attr('ta-toolbar-group-class', attrs.taToolbarGroupClass);
-                    if(attrs.taToolbarButtonClass)			_toolbar.attr('ta-toolbar-button-class', attrs.taToolbarButtonClass);
-                    if(attrs.taToolbarActiveButtonClass)	_toolbar.attr('ta-toolbar-active-button-class', attrs.taToolbarActiveButtonClass);
-                    if(attrs.taFocussedClass)				_toolbar.attr('ta-focussed-class', attrs.taFocussedClass);
+                    if(attrs.taToolbar)                     _toolbar.attr('ta-toolbar', attrs.taToolbar);
+                    if(attrs.taToolbarClass)                _toolbar.attr('ta-toolbar-class', attrs.taToolbarClass);
+                    if(attrs.taToolbarGroupClass)           _toolbar.attr('ta-toolbar-group-class', attrs.taToolbarGroupClass);
+                    if(attrs.taToolbarButtonClass)          _toolbar.attr('ta-toolbar-button-class', attrs.taToolbarButtonClass);
+                    if(attrs.taToolbarActiveButtonClass)    _toolbar.attr('ta-toolbar-active-button-class', attrs.taToolbarActiveButtonClass);
+                    if(attrs.taFocussedClass)               _toolbar.attr('ta-focussed-class', attrs.taFocussedClass);
 
                     element.prepend(_toolbar);
                     $compile(_toolbar)(scope.$parent);
@@ -3652,6 +3657,8 @@ textAngular.directive("textAngular", [
                             scope.updateSelectedStyles();
                         });
                     }
+                    scope.lastSel = rangy.getSelection();
+                    // scope.onLostFocus();
                 };
                 scope.displayElements.html.on('keydown', _keydown);
                 scope.displayElements.text.on('keydown', _keydown);
@@ -3856,7 +3863,7 @@ textAngular.service('textAngularManager', ['taToolExecuteAction', 'taTools', 'ta
                             if(
                                 tool.onElementSelect &&
                                 tool.onElementSelect.element &&
-                                tool.onElementSelect.element.toLowerCase() === element[0].tagName.toLowerCase() &&
+                                (tool.onElementSelect.element.toLowerCase() === element[0].tagName.toLowerCase() || tool.onElementSelect.element.toLowerCase().split(",").indexOf(element[0].tagName.toLowerCase()) != -1 ) &&
                                 (!tool.onElementSelect.filter || tool.onElementSelect.filter(element))
                             ){
                                 // this should only end up true if the element matches the only attributes
@@ -4096,12 +4103,12 @@ textAngular.directive('textAngularToolbar', [
             link: function(scope, element, attrs){
                 if(!scope.name || scope.name === '') throw('textAngular Error: A toolbar requires a name');
                 angular.extend(scope, angular.copy(taOptions));
-                if(attrs.taToolbar)						scope.toolbar = scope.$parent.$eval(attrs.taToolbar);
-                if(attrs.taToolbarClass)				scope.classes.toolbar = attrs.taToolbarClass;
-                if(attrs.taToolbarGroupClass)			scope.classes.toolbarGroup = attrs.taToolbarGroupClass;
-                if(attrs.taToolbarButtonClass)			scope.classes.toolbarButton = attrs.taToolbarButtonClass;
-                if(attrs.taToolbarActiveButtonClass)	scope.classes.toolbarButtonActive = attrs.taToolbarActiveButtonClass;
-                if(attrs.taFocussedClass)				scope.classes.focussed = attrs.taFocussedClass;
+                if(attrs.taToolbar)                     scope.toolbar = scope.$parent.$eval(attrs.taToolbar);
+                if(attrs.taToolbarClass)                scope.classes.toolbar = attrs.taToolbarClass;
+                if(attrs.taToolbarGroupClass)           scope.classes.toolbarGroup = attrs.taToolbarGroupClass;
+                if(attrs.taToolbarButtonClass)          scope.classes.toolbarButton = attrs.taToolbarButtonClass;
+                if(attrs.taToolbarActiveButtonClass)    scope.classes.toolbarButtonActive = attrs.taToolbarActiveButtonClass;
+                if(attrs.taFocussedClass)               scope.classes.focussed = attrs.taFocussedClass;
 
                 scope.disabled = true;
                 scope.focussed = false;
